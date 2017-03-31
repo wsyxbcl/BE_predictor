@@ -1,7 +1,7 @@
 %% Network demo, for visualisation the result
 clear; clc;
 %% Coefficients
-breakpoints = [32 68 100 132 168];
+% breakpoints = [32 68 100 132 168];
 % breakpoints = [14 32 84 100 116 132 148 168];
 coordinates = 0;
 root = 0;
