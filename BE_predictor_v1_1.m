@@ -16,15 +16,16 @@ function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(breakpoints, range, 
 % sqrt() to the input data.
 % by yx_chai, 2017.3.29
 
-% BE_predictor_v1.2
+% BE_predictor_v1.1.1
 % Change the parameter of fitnet by network's property based in MATLAB.
 % by yx_chai, 2017.3.30
+
 %% Data preparation
 % clc
 % clear
 
 % Load data
-%fprintf('Loading data...\n')
+% fprintf('Loading data...\n')
 X_original = load('nianwu_data_input_values.csv');
 Y_original = load('nianwu_data_output_values.csv');
 Y = Y_original;
@@ -48,6 +49,7 @@ X_seg_ave = zeros(m, num_segments);
 for i = (1:num_segments)
     X_seg_ave(:, i) = mean(...
         X_original(:, (breakpoints(i) + 1 - range/2):(breakpoints(i) + range/2)), 2);
+        % When range = 2 -> 100:101
 end
 X = X_seg_ave;
 % 3 segments
