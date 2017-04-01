@@ -62,7 +62,7 @@ for loo_time = (1:m_train)
     loo_error = loo_error + error_abs/abs(Y_loo);
     % fprintf('count\n');
 end
-loo_error = mean(loo_error);
+loo_error = loo_error/m_train; % bug fixed, replace mean(), yx_chai, 20170402
 %% Test part
 % Feature scaling && Normolization of the test set
 X_test_norm = mapminmax('apply', X_test, X_ps);
