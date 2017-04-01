@@ -1,4 +1,4 @@
-function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(breakpoints, range, ratio_train, units, coordinates, root)
+function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_original, LOO, breakpoints, range, ratio_train, units, coordinates, root)
 % Using tool kit in MATLAB to build BP NN for the Bonding energy
 % error_ave = BE_predictor(breakpoints, range, ratio_train, units)
 % by Yunxuan Chai(yx_chai@whu.edu.cn), 2017.3.12
@@ -20,14 +20,26 @@ function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(breakpoints, range, 
 % Change the parameter of fitnet by network's property based in MATLAB.
 % by yx_chai, 2017.3.30
 
+% BE_predictor_v1.1.2
+% Add multielements feature, change the source of data to satisfy the need
+% of multielements training.
+% Add LOO feature to the function, enable Leave-One-Out cross validation.
+% And the ratio_train feature is kept to enable the test set, test set will
+% be replaced by loo_sample
+% by yx_chai, 2017.4.1
+
+% BE_predictor_v1.1.2.1
+% Bug fixed: in error_re_ave, put the abs to the Y_output step
+% by yx_chai, 2017.4.1
+
 %% Data preparation
 % clc
 % clear
 
 % Load data
 % fprintf('Loading data...\n')
-X_original = load('nianwu_data_input_values.csv');
-Y_original = load('nianwu_data_output_values.csv');
+% X_original = load('nianwu_data_input_values.csv');
+% Y_original = load('nianwu_data_output_values.csv');
 Y = Y_original;
 m = size(X_original, 1);
 if root
@@ -67,19 +79,23 @@ X = X_seg_ave;
 % X_5 = X_original(:, (breakpoints(5) + 1 - range/2):(breakpoints(5) + range/2));
 % X = [mean(X_1, 2) mean(X_2, 2) mean(X_3, 2) mean(X_4, 2) mean(X_5, 2)]; % m0 * n0
 
-size_train = ceil(ratio_train*m);
+m_train = ceil(ratio_train*m);
 % Dividing data randomly
 k = rand(1, m);
 [~, idx] = sort(k);
-X_train = X(idx(1:size_train), :)'; % n * m
-Y_train = Y(idx(1:size_train))'; % 1 * m
-X_test = X(idx(1+size_train:m), :)';
-Y_test = Y(idx(1+size_train:m))';
+X_test = X(idx(1+m_train:m), :)';
+Y_test = Y(idx(1+m_train:m))';
+
+for loo_time = (1:m_train)
+    X_train = X(idx(1:m_train), :)'; % n * m
+    Y_train = Y(idx(1:m_train))'; % 1 * m
+
+    loo_sample = X_train
 
 % Feature scaling && Normolization
 [X_norm, X_ps] = mapminmax(X_train);
 [Y_norm, Y_ps] = mapminmax(Y_train);
-% 
+%
 %% Training process using newff
 % nn = newff(X_norm, Y_norm, 25);
 % % nn = newff(X_norm, Y_norm, [1, 1], {'tansig', 'tansig'});
@@ -94,8 +110,8 @@ Y_test = Y(idx(1+size_train:m))';
 % fprintf('Training nn...\n')
 % nn = fitnet([5, 1]);
 nn = fitnet(units);
-nn.divideParam.trainRatio = 0.9;
-nn.divideParam.valRatio = 0.1;
+nn.divideParam.trainRatio = 0.7;
+nn.divideParam.valRatio = 0.3;
 nn.divideParam.testRatio = 0;
 nn = train(nn, X_norm, Y_norm);
 %% Testing part
@@ -114,8 +130,8 @@ Y_output = mapminmax('reverse', result, Y_ps);
 % plot(Y_test, '- *');
 % Calculate the error
 error_abs = abs(Y_output - Y_test);
-error_re = (error_abs)./(Y_test);
-error_re_ave = mean(abs(error_re)); % using abs here for convenience
+error_re = (error_abs)./abs(Y_test);
+error_re_ave = mean(error_re); % using abs here for convenience
 
 
 % figure(2)
