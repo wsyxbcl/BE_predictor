@@ -1,22 +1,33 @@
 %% Network demo, for visualisation the result
 clear; clc;
+close(figure(1))
+%% Data preparation
+% X_original = load('nianwu_data_input_values.csv');
+% Y_original = load('nianwu_data_output_values.csv');
+% m = size(X_original, 1);
+% 
+% elements = {'H', 'Li', 'B', 'C', 'N', 'O', 'F', 'Na', 'Mg',...
+%    'Al','Si', 'P', 'S', 'Cl'}
+datasets = load('datasets\data_O.csv');
+m = size(datasets, 1);
+n = size(datasets, 2);
+X_original = datasets(:, 1:n-1);
+Y_original = datasets(:, n);
 %% Coefficients
 % breakpoints = [32 68 100 132 168];
-% breakpoints = [14 32 84 100 116 132 148 168];
+breakpoints = [20 40 60 80 100 120 140 160 180];
 coordinates = 0;
 root = 0;
-ratio_train = 0.9;
-range = 14;
+ratio_train = 1;
+range = 20;
 units = 3;
 
 [nn, error, X_ps, Y_ps] = ...
-    BE_predictor_v1_1(breakpoints, range, ratio_train, units, coordinates, root);
+    BE_predictor_v1_1(X_original, Y_original, breakpoints, range, ratio_train, units, coordinates, root);
 fprintf('Error: %f\n', error);
 %% Result demo
-X_original = load('nianwu_data_input_values.csv');
-Y_original = load('nianwu_data_output_values.csv');
+
 Y = Y_original';
-m = size(X_original, 1);
 if root
     X_original = sqrt(X_original); %test for sqrt input
 end
