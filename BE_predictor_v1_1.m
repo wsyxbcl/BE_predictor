@@ -1,4 +1,4 @@
-function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_original, LOO, breakpoints, range, ratio_train, units, coordinates, root)
+function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_original, breakpoints, range, ratio_train, units, coordinates, root)
 % Using tool kit in MATLAB to build BP NN for the Bonding energy
 % error_ave = BE_predictor(breakpoints, range, ratio_train, units)
 % by Yunxuan Chai(yx_chai@whu.edu.cn), 2017.3.12
@@ -85,13 +85,8 @@ k = rand(1, m);
 [~, idx] = sort(k);
 X_test = X(idx(1+m_train:m), :)';
 Y_test = Y(idx(1+m_train:m))';
-
-for loo_time = (1:m_train)
-    X_train = X(idx(1:m_train), :)'; % n * m
-    Y_train = Y(idx(1:m_train))'; % 1 * m
-
-    loo_sample = X_train
-
+X_train = X(idx(1:m_train), :)'; % n * m
+Y_train = Y(idx(1:m_train))'; % 1 * m
 % Feature scaling && Normolization
 [X_norm, X_ps] = mapminmax(X_train);
 [Y_norm, Y_ps] = mapminmax(Y_train);
