@@ -43,9 +43,10 @@ for loo_time = (1:m_train)
     X_train(:, loo_time) = [];
     Y_train(:, loo_time) = [];
     % Feature scaling && Normolization
-    [X_norm, X_ps] = mapminmax(X_train);
-    [Y_norm, Y_ps] = mapminmax(Y_train);
-
+%     [X_norm, X_ps] = mapminmax(X_train);
+%     [Y_norm, Y_ps] = mapminmax(Y_train);
+    X_norm = X_train;
+    Y_norm = Y_train;
     %% Training process using fitnet
     % fprintf('Training nn...\n')
     % nn = fitnet([5, 1]);
@@ -55,9 +56,11 @@ for loo_time = (1:m_train)
     nn.divideParam.testRatio = 0;
     nn = train(nn, X_norm, Y_norm);
     
-    X_loo_norm = mapminmax('apply', X_loo, X_ps);
+%     X_loo_norm = mapminmax('apply', X_loo, X_ps);
+    X_loo_norm = X_loo;
     loo_result = nn(X_loo_norm);
-    Y_loo_output = mapminmax('reverse', loo_result, Y_ps);
+%     Y_loo_output = mapminmax('reverse', loo_result, Y_ps);
+    Y_loo_output = loo_result;
     error_abs = abs(Y_loo_output - Y_loo);
     loo_error = loo_error + error_abs/abs(Y_loo);
     % fprintf('count\n');
@@ -65,11 +68,13 @@ end
 loo_error = loo_error/m_train; % bug fixed, replace mean(), yx_chai, 20170402
 %% Test part
 % Feature scaling && Normolization of the test set
-X_test_norm = mapminmax('apply', X_test, X_ps);
+% X_test_norm = mapminmax('apply', X_test, X_ps);
+X_test_norm = X_test;
 % Predicting
 result = nn(X_test_norm);
 % Reverse the feature scaling
-Y_output = mapminmax('reverse', result, Y_ps);
+% Y_output = mapminmax('reverse', result, Y_ps);
+Y_output = result;
 error_abs = abs(Y_output - Y_test);
 error_re = (error_abs)./abs(Y_test);
 error_re_ave = mean(error_re); % using abs here for convenience
