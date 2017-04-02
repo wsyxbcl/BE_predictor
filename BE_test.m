@@ -52,14 +52,16 @@ end
 %% mesh errors
 j = 1;
 for i = element_set
+    % mesh error grid
     figure(j)
     eval(strcat('mesh(test_range, test_units, error_',i{1},')'));
     title(i{1});
-    j = j + 1;
+    % output min of errors and its condition
     eval(strcat('[error_min, I] = min(error_', i{1}, '(:));'));
     eval(strcat('[I_row, I_col] = ind2sub(size(error_', i{1}, '), I);'));
     range_min = test_range(I_col);
     units_min = test_units(I_row);
     fprintf('Min of %s = %.2f when range = %.2f and units = %d.\n', i{1}, ...
         error_min, range_min, units_min);
+    j = j + 1;
 end
