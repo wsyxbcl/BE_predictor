@@ -42,3 +42,7 @@ And the ratio_train feature is kept to enable the test set, test set will
 be replaced by loo_sample  
 Bug fixed: in error_re_ave, put the abs to the Y_output step  
 by yx_chai, 2017.4.1
+
+Future plan
+1. Try PCA to explore the density
+2. Use noise to create more samples?
