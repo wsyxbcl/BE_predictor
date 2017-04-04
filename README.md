@@ -46,3 +46,6 @@ by yx_chai, 2017.4.1
 Future plan
 1. Try PCA to explore the density
 2. Use noise to create more samples?
+3. Inspired by the way they train imagenet(use random patches and reflection
+of an image to get more data), maybe I can use different(but similar) slice of data
+to get such job done.
