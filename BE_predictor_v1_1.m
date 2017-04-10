@@ -1,4 +1,4 @@
-function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_original, breakpoints, range, ratio_train, units, coordinates, root)
+function [nn, error_re_ave] = BE_predictor_v1_1(X_original, Y_original, breakpoints, range, ratio_train, units, coordinates, root)
 % Using tool kit in MATLAB to build BP NN for the Bonding energy
 % error_ave = BE_predictor(breakpoints, range, ratio_train, units)
 % by Yunxuan Chai(yx_chai@whu.edu.cn), 2017.3.12
@@ -32,9 +32,10 @@ function [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_origin
 % Bug fixed: in error_re_ave, put the abs to the Y_output step
 % by yx_chai, 2017.4.1
 
-%% Data preparation
-% clc
-% clear
+% BE_predictor_v1.1.3
+% Refined version of v1.1.2, remove some chaos, and remove the feature
+% scaling part for our features are already in same dimension
+
 
 % Load data
 % fprintf('Loading data...\n')
@@ -64,20 +65,6 @@ for i = (1:num_segments)
         % When range = 2 -> 100:101
 end
 X = X_seg_ave;
-% 3 segments
-% X_1 = X_original(:, (breakpoints(1) + 1 - range/2):(breakpoints(1) + range/2));
-% X_2 = X_original(:, (breakpoints(2) + 1 - range/2):(breakpoints(2) + range/2));
-% X_3 = X_original(:, (breakpoints(3) + 1 - range/2):(breakpoints(3) + range/2));
-
-% X = [mean(X_1, 2) mean(X_2, 2) mean(X_3, 2)];
-
-% 5 segments
-% X_1 = X_original(:, (breakpoints(1) + 1 - range/2):(breakpoints(1) + range/2));
-% X_2 = X_original(:, (breakpoints(2) + 1 - range/2):(breakpoints(2) + range/2));
-% X_3 = X_original(:, (breakpoints(3) + 1 - range/2):(breakpoints(3) + range/2));
-% X_4 = X_original(:, (breakpoints(4) + 1 - range/2):(breakpoints(4) + range/2));
-% X_5 = X_original(:, (breakpoints(5) + 1 - range/2):(breakpoints(5) + range/2));
-% X = [mean(X_1, 2) mean(X_2, 2) mean(X_3, 2) mean(X_4, 2) mean(X_5, 2)]; % m0 * n0
 
 m_train = ceil(ratio_train*m);
 % Dividing data randomly
@@ -88,18 +75,10 @@ Y_test = Y(idx(1+m_train:m))';
 X_train = X(idx(1:m_train), :)'; % n * m
 Y_train = Y(idx(1:m_train))'; % 1 * m
 % Feature scaling && Normolization
-[X_norm, X_ps] = mapminmax(X_train);
-[Y_norm, Y_ps] = mapminmax(Y_train);
-%
-%% Training process using newff
-% nn = newff(X_norm, Y_norm, 25);
-% % nn = newff(X_norm, Y_norm, [1, 1], {'tansig', 'tansig'});
-% nn.trainParam.epochs = 1000;
-% nn.trainParam.lr = 0.01;
-% nn.trainParam.goal = 0.000001;
-% % nn.divideFcn = '';
-% % nn.trainParam.max_fail=100; 
-% nn = train(nn, X_norm, Y_norm);
+% [X_norm, X_ps] = mapminmax(X_train);
+% [Y_norm, Y_ps] = mapminmax(Y_train);
+X_norm = X_train;
+Y_norm = Y_train;
 
 %% Training process using fitnet
 % fprintf('Training nn...\n')
@@ -111,32 +90,17 @@ nn.divideParam.testRatio = 0;
 nn = train(nn, X_norm, Y_norm);
 %% Testing part
 % Feature scaling && Normolization of the test set
-X_test_norm = mapminmax('apply', X_test, X_ps);
+% X_test_norm = mapminmax('apply', X_test, X_ps);
+X_test_norm = X_test;
 % Predicting
 result = nn(X_test_norm);
 % Reverse the feature scaling
-Y_output = mapminmax('reverse', result, Y_ps);
+% Y_output = mapminmax('reverse', result, Y_ps);
+Y_output = result;
 
-% Showing the result
-% figure(1)
-% plot(Y_output, 'og');
-% hold on
 
-% plot(Y_test, '- *');
 % Calculate the error
 error_abs = abs(Y_output - Y_test);
 error_re = (error_abs)./abs(Y_test);
 error_re_ave = mean(error_re); % using abs here for convenience
-
-
-% figure(2)
-% plot(error, '- *')
-% ylabel('error', 'fontsize', 12)
-% xlabel('sample', 'fontsize', 12)
-% fprintf('average error: %f\naverage test case: %f\n', error_ave, mean(Y_test))
-% fprintf('relative error: %f\n', error_re_ave)
-% Plot the distribution of the weight between the input and the first
-% hidden layer
-% figure(2)
-% plot(nn.iw{1,1});
 end
