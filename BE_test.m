@@ -1,9 +1,10 @@
 %% Used to creat condition of nn and test it performance in loop
 clc; clear;
 process = 0; %variable use to track the process
-element_set = {'H', 'Li', 'B', 'C', 'N', 'O', 'F', 'Na', 'Mg',...
-    'Al','Si', 'P', 'S', 'Cl'};
-for element = element_set;
+% element_set = {'H', 'Li', 'B', 'C', 'N', 'O', 'F', 'Na', 'Mg',...
+%     'Al','Si', 'P', 'S', 'Cl'};
+element_set = {'O'};
+for element = element_set
     filename = strcat('datasets\data_',element,'.csv');
     filename = filename{1};
     datasets = load(filename);
@@ -13,14 +14,15 @@ for element = element_set;
     %% test of range and num_units
     test_time = 10;
     % breakpoint = [48 100 152];
-    breakpoints = [32 68 100 132 168];
+    % breakpoints = [32 68 100 132 168];
     % breakpoints = [20 40 60 80 100 120 140 160 180];
+    breakpoints = (10:10:190);
     coordinates = 0;
     root = 0;
     LOO = 1; % Leave-one-out validation
     ratio_train = 1;
-    test_range = (16:4:32); % 1*x vector
-    test_units = (2:1:8);
+    test_range = [6, 10]; % 1*x vector
+    test_units = (2:1:5);
     time_total = size(test_units, 2) * size(test_range, 2) * test_time * size(element_set, 2);
     test_error_range = zeros(test_time, size(test_range, 2)); % num_test * num_range
     test_error_all = zeros(size(test_units,2), size(test_range, 2));
