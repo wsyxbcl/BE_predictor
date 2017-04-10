@@ -49,3 +49,8 @@ Future plan
 3. Inspired by the way they train imagenet(use random patches and reflection
 of an image to get more data), maybe I can use different(but similar) slice of data
 to get such job done.
+
+A problem remained to be confirmed:  
+Is mean normalization necessary since we remove the feature scaling part?  
+Don't think that's important at this time, for when doing things with gradients, it
+ works exactly the same, just take a record here.
