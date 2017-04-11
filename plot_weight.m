@@ -1,7 +1,7 @@
-function nn = plot_weight(breakpoints, nn)
+function nn = plot_weight(breakpoints, nn, cancel)
 % function nn = plot_weight(breakpoint, range, ratio_train, units)
 % Use input [1 0 0,...], [0 1 0, ...][0 0 1, ...] to generate the weights
-
+% Use cancel to cancel the last draw
 %% Training part
 % error_re_ave = 1;
 % while(error_re_ave >= 0.15)
@@ -19,5 +19,9 @@ for i = segments
     weights(i) = nn(X_input(:, i)); % each weight corresponds a segment of data
 end
 figure(2);
-plot(segments, weights);
+if cancel
+    plot(segments, weights, 'w');
+else
+    plot(segments, weights);
+end
 hold on;

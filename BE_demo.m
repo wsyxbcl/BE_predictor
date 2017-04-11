@@ -1,5 +1,6 @@
 %% Network demo, for visualisation the result
-clear; clc;
+clear;
+% clc;
 close(figure(1))
 %% Data preparation
 % X_original = load('nianwu_data_input_values.csv');
@@ -15,16 +16,17 @@ X_original = datasets(:, 1:n-1);
 Y_original = datasets(:, n);
 %% Coefficients
 % breakpoints = [32 68 100 132 168];
-breakpoints = [20 40 60 80 100 120 140 160 180];
+% breakpoints = [20 40 60 80 100 120 140 160 180];
+breakpoints = (10:10:190);
 coordinates = 0;
 root = 0;
 ratio_train = 1;
-range = 20;
+range = 10;
 units = 3;
 
-[nn, error, X_ps, Y_ps] = ...
+[nn, error] = ...
     BE_predictor_v1_1(X_original, Y_original, breakpoints, range, ratio_train, units, coordinates, root);
-fprintf('Error: %f\n', error);
+% fprintf('Error: %f\n', error);
 %% Result demo
 
 Y = Y_original';
@@ -44,9 +46,11 @@ for i = (1:num_segments)
         X_original(:, (breakpoints(i) + 1 - range/2):(breakpoints(i) + range/2)), 2);
 end
 X = X_seg_ave';
-X_norm = mapminmax('apply', X, X_ps);
+% X_norm = mapminmax('apply', X, X_ps);
+X_norm = X;
 result = nn(X_norm);
-Y_output = mapminmax('reverse', result, Y_ps);
+% Y_output = mapminmax('reverse', result, Y_ps);
+Y_output = result;
 
 %% Visualization
 figure(1)
@@ -55,4 +59,4 @@ hold on
 plot(Y, '- *');
 
 %% Plot weight
-plot_weight(breakpoints, nn);
+plot_weight(breakpoints, nn, 0);
