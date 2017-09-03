@@ -1,6 +1,6 @@
 # BE_predictor
-Using neural network to predict the bonding energy.  
-Using tool kit in MATLAB to build BP NN for the Bonding energy  
+Using neural network to predict the binding energy.  
+Using tool kit in MATLAB to build BP NN for the Binding energy  
 [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_original, LOO, breakpoints, range, ratio_train, units, coordinates, root)
   
   by Yunxuan Chai(yx_chai@whu.edu.cn), 2017.3.12
