@@ -3,7 +3,7 @@ Using neural network to predict the binding energy.
 Using tool kit in MATLAB to build BP NN for the Binding energy  
 [nn, error_re_ave, X_ps, Y_ps] = BE_predictor_v1_1(X_original, Y_original, LOO, breakpoints, range, ratio_train, units, coordinates, root)
   
-  by Yunxuan Chai(yx_chai@whu.edu.cn), 2017.3.12
+  by wsyxbcl(wsyxbcl@gmail.com), 2017.3.12
 
 ## BE_predictor_v1.0
 Add divide func: Change the way that data is divided, from continuous to
